@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Days since JP tracked drums for Crossfire</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #111827;
+      color: #ffffff;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+      background: #1f2937;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+    }
+
+    .subtitle {
+      color: #d1d5db;
+      margin-bottom: 28px;
+    }
+
+    .total-days {
+      font-size: clamp(4rem, 18vw, 8rem);
+      font-weight: bold;
+      color: #38bdf8;
+      line-height: 1;
+    }
+
+    .label {
+      color: #d1d5db;
+      margin: 8px 0 28px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .box {
+      background: #374151;
+      border-radius: 14px;
+      padding: 16px 10px;
+    }
+
+    .box strong {
+      display: block;
+      font-size: 2rem;
+    }
+
+    .box span {
+      color: #d1d5db;
+      font-size: 0.9rem;
+    }
+
+    .date-note {
+      margin-top: 24px;
+      color: #d1d5db;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 560px) {
+      .summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Days since JP tracked drums for Crossfire</h1>
+    <p class="subtitle">Counting from Friday 1 March 2024 to today.</p>
+
+    <div class="total-days" id="totalDays">0</div>
+    <p class="label">total days elapsed</p>
+
+    <section class="summary">
+      <div class="box">
+        <strong id="years">0</strong>
+        <span>years</span>
+      </div>
+      <div class="box">
+        <strong id="months">0</strong>
+        <span>months</span>
+      </div>
+      <div class="box">
+        <strong id="weeks">0</strong>
+        <span>weeks</span>
+      </div>
+      <div class="box">
+        <strong id="days">0</strong>
+        <span>days</span>
+      </div>
+    </section>
+
+    <p class="date-note" id="dateNote"></p>
+  </main>
+
+  <script>
+    const startDate = new Date(2024, 2, 1); // Friday 1 March 2024
+
+    function daysInPreviousMonth(date) {
+      return new Date(date.getFullYear(), date.getMonth(), 0).getDate();
+    }
+
+    function updateDateCalculator() {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+
+      const millisecondsPerDay = 1000 * 60 * 60 * 24;
+      const totalDays = Math.floor((today - start) / millisecondsPerDay);
+
+      let years = today.getFullYear() - start.getFullYear();
+      let months = today.getMonth() - start.getMonth();
+      let days = today.getDate() - start.getDate();
+
+      if (days < 0) {
+        months -= 1;
+        days += daysInPreviousMonth(today);
+      }
+
+      if (months < 0) {
+        years -= 1;
+        months += 12;
+      }
+
+      const weeks = Math.floor(totalDays / 7);
+      const remainingDays = totalDays % 7;
+
+      document.getElementById('totalDays').textContent = totalDays.toLocaleString();
+      document.getElementById('years').textContent = years;
+      document.getElementById('months').textContent = months;
+      document.getElementById('weeks').textContent = weeks;
+      document.getElementById('days').textContent = remainingDays;
+
+      document.getElementById('dateNote').textContent =
+        'As at ' + today.toLocaleDateString(undefined, {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+    }
+
+    updateDateCalculator();
+  </script>
+</body>
+</html>
